@@ -442,3 +442,161 @@ body {
         padding: 0 15px;
     }
 }
+
+/* =========================================
+   NOTIFIKASI ABSENSI
+========================================= */
+
+#result {
+    margin-top: 20px;
+}
+
+.attendance-notif {
+    position: fixed;
+    inset: 0;
+
+    z-index: 9999;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    padding: 20px;
+
+    background: rgba(0, 0, 0, 0.55);
+
+    animation: notifBlink 0.7s infinite alternate;
+}
+
+.notif-box {
+    width: min(700px, 90vw);
+
+    padding: 40px 35px;
+
+    text-align: center;
+
+    border-radius: 25px;
+
+    background: white;
+
+    box-shadow:
+        0 0 25px rgba(255,255,255,0.9),
+        0 0 60px rgba(37,99,235,0.8);
+
+    animation:
+        notifZoom 0.35s ease-out,
+        notifPulse 0.8s infinite alternate;
+}
+
+.notif-icon {
+    font-size: 70px;
+
+    margin-bottom: 15px;
+}
+
+.notif-title {
+    font-size: 32px;
+
+    font-weight: 800;
+
+    margin-bottom: 12px;
+}
+
+.notif-message {
+    font-size: 20px;
+
+    line-height: 1.5;
+
+    font-weight: 600;
+}
+
+.notif-time {
+    margin-top: 15px;
+
+    font-size: 15px;
+
+    color: #6b7280;
+}
+
+
+/* HADIR */
+.notif-hadir .notif-box {
+    border: 5px solid #22c55e;
+}
+
+.notif-hadir .notif-title {
+    color: #16a34a;
+}
+
+
+/* TERLAMBAT */
+.notif-terlambat .notif-box {
+    border: 5px solid #f59e0b;
+}
+
+.notif-terlambat .notif-title {
+    color: #d97706;
+}
+
+
+/* DITOLAK */
+.notif-ditolak .notif-box {
+    border: 5px solid #ef4444;
+}
+
+.notif-ditolak .notif-title {
+    color: #dc2626;
+}
+
+
+/* SUDAH ABSEN */
+.notif-sudah .notif-box {
+    border: 5px solid #3b82f6;
+}
+
+.notif-sudah .notif-title {
+    color: #2563eb;
+}
+
+
+/* =========================================
+   ANIMASI
+========================================= */
+
+@keyframes notifBlink {
+
+    from {
+        background: rgba(0,0,0,0.45);
+    }
+
+    to {
+        background: rgba(0,0,0,0.75);
+    }
+
+}
+
+@keyframes notifPulse {
+
+    from {
+        transform: scale(1);
+    }
+
+    to {
+        transform: scale(1.025);
+    }
+
+}
+
+@keyframes notifZoom {
+
+    from {
+        transform: scale(0.5);
+        opacity: 0;
+    }
+
+    to {
+        transform: scale(1);
+        opacity: 1;
+    }
+
+}

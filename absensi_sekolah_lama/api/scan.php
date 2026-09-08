@@ -1,6 +1,7 @@
 <?php
 require_once '../config/database.php';
 require_once '../config/auth.php';
+require_once '../config/whatsapp.php';
 
 require_login();
 
@@ -83,7 +84,7 @@ try {
     // =====================================================
 
     $stmt = $pdo->prepare("
-        SELECT id, nis, nama, kelas
+        SELECT id, nis, nama, kelas, no_wa_ortu
         FROM siswa
         WHERE nis = ?
         LIMIT 1
@@ -188,6 +189,23 @@ try {
 
 
         // -----------------------------
+        // KIRIM NOTIFIKASI WHATSAPP KE ORANG TUA
+        // -----------------------------
+
+        if (!empty($siswa['no_wa_ortu'])) {
+            $pesanWa = format_pesan_absensi(
+                $siswa['nama'],
+                $siswa['kelas'],
+                $status,
+                $jam,
+                'Absen masuk'
+            );
+
+            kirim_wa($siswa['no_wa_ortu'], $pesanWa);
+        }
+
+
+        // -----------------------------
         // RESPONSE
         // -----------------------------
 
@@ -265,6 +283,23 @@ try {
             $jam,
             $absensi['id']
         ]);
+
+
+        // -----------------------------
+        // KIRIM NOTIFIKASI WHATSAPP KE ORANG TUA
+        // -----------------------------
+
+        if (!empty($siswa['no_wa_ortu'])) {
+            $pesanWa = format_pesan_absensi(
+                $siswa['nama'],
+                $siswa['kelas'],
+                'Pulang',
+                $jam,
+                'Absen pulang'
+            );
+
+            kirim_wa($siswa['no_wa_ortu'], $pesanWa);
+        }
 
 
         responseJson(

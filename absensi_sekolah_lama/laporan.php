@@ -33,6 +33,99 @@ $kelasRows = $pdo->query("SELECT DISTINCT kelas FROM siswa ORDER BY kelas")->fet
 include 'partials/header.php';
 ?>
 
+<style>
+    /* Kop surat & TTD disembunyikan di layar biasa, hanya muncul saat print */
+    .kop-surat {
+        display: none;
+    }
+
+    .ttd-wrap {
+        display: none;
+    }
+
+    @media print {
+        /* Sembunyikan elemen dashboard yang tidak perlu saat dicetak */
+        .sidebar, .topbar, .filters, .section-head, .btn, nav {
+            display: none !important;
+        }
+
+        /* Reset margin/padding container utama supaya tidak mengikuti layout sidebar */
+        html, body {
+            margin: 0 !important;
+            padding: 0 !important;
+            width: 100% !important;
+            background: #fff !important;
+        }
+
+        .app {
+            display: block !important;
+        }
+
+        .main {
+            margin-left: 0 !important;
+            width: 100% !important;
+        }
+
+        .content {
+            padding: 0 !important;
+            margin: 0 auto !important;
+            max-width: 100% !important;
+        }
+
+        .kop-surat {
+            display: block;
+            text-align: center;
+            margin: 0 auto 20px auto;
+        }
+
+        .kop-surat img {
+            display: block;
+            width: 100%;
+            max-width: 800px;
+            height: auto;
+            margin: 0 auto;
+        }
+
+        .ttd-wrap {
+            display: flex !important;
+            justify-content: flex-end;
+            margin-top: 60px;
+            padding-right: 40px;
+            width: 100%;
+        }
+
+        .ttd-box {
+            text-align: center;
+            width: 250px;
+        }
+
+        .ttd-space {
+            height: 80px;
+        }
+
+        .table-wrap {
+            overflow: visible !important;
+            margin: 0 auto !important;
+            width: 100% !important;
+        }
+
+        table {
+            width: 100% !important;
+            border-collapse: collapse !important;
+            margin: 0 auto !important;
+        }
+
+        table th, table td {
+            border: 1px solid #000 !important;
+        }
+    }
+</style>
+
+<!-- KOP SURAT: hanya tampil saat cetak -->
+<div class="kop-surat">
+    <img src="picture/kop.png" alt="Kop Surat SMK Taruna Bangsa">
+</div>
+
 <div class="section-head">
     <h3>Rekap Kehadiran</h3>
     <div>
@@ -97,6 +190,17 @@ include 'partials/header.php';
             <?php endif; ?>
         </tbody>
     </table>
+</div>
+
+<!-- TTD KEPALA SEKOLAH: hanya tampil saat cetak -->
+<div class="ttd-wrap">
+    <div class="ttd-box">
+        <p><?= date('d F Y') ?></p>
+        <p>Mengetahui,<br>Kepala Sekolah</p>
+        <div class="ttd-space"></div>
+        <p><strong><u>____________________</u></strong><br>
+        NIP. ..........................</p>
+    </div>
 </div>
 
 <?php include 'partials/footer.php'; ?>

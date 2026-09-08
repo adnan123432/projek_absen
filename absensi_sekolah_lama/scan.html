@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Scan Absensi Siswa</title>
+<script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
+<style>
+  body {
+    font-family: Arial, sans-serif;
+    max-width: 480px;
+    margin: 20px auto;
+    padding: 0 16px;
+    text-align: center;
+    background: #f4f6f8;
+  }
+  h2 { color: #1e293b; }
+  #reader { width: 100%; border-radius: 12px; overflow: hidden; }
+  #hasil {
+    margin-top: 20px;
+    padding: 16px;
+    border-radius: 12px;
+    background: white;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    min-height: 60px;
+  }
+  .hadir { color: #16a34a; font-weight: bold; }
+  .terlambat { color: #d97706; font-weight: bold; }
+  .error { color: #dc2626; font-weight: bold; }
+  .data-siswa p { margin: 4px 0; }
+</style>
+</head>
+<body>
+
+<h2>Scan QR Absensi</h2>
+<div id="reader"></div>
+<div id="hasil">Arahkan kamera ke QR code siswa...</div>
+
+<script>
+const hasilDiv = document.getElementById("hasil");
+let sedangProses = false; // supaya tidak kirim berkali-kali saat QR masih di depan kamera
+
+function onScanSuccess(decodedText) {
+  if (sedangProses) return;
+  sedangProses = true;
+
+  hasilDiv.innerHTML = "QR terbaca: " + decodedText + " — mengirim ke server...";
+
+  fetch("api/scan.php", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ id_unik: decodedText })
+  })
+  .then(res => {
+    if (!res.ok) {
+      throw new Error("Server merespon status " + res.status + " (cek log PHP / path folder api/)");
+    }
+    return res.text(); // ambil sebagai text dulu supaya bisa lihat kalau bukan JSON
+  })
+  .then(text => {
+    let data;
+    try {
+      data = JSON.parse(text);
+    } catch (e) {
+      throw new Error("Respon server bukan JSON, kemungkinan ada error PHP: " + text.substring(0, 200));
+    }
+
+    if (data.status === "error") {
+      hasilDiv.innerHTML = `<p class="error">${data.pesan}</p>`;
+    } else {
+      let kelasStatus = data.absen_status === "terlambat" ? "terlambat" : "hadir";
+      hasilDiv.innerHTML = `
+        <div class="data-siswa">
+          <p><b>Nama:</b> ${data.nama}</p>
+          <p><b>Kelas:</b> ${data.kelas}</p>
+          <p><b>NISN:</b> ${data.nisn}</p>
+          <p><b>Jam Scan:</b> ${data.jam_scan}</p>
+          <p class="${kelasStatus}">Status: ${data.absen_status.toUpperCase()}</p>
+        </div>
+      `;
+    }
+  })
+  .catch(err => {
+    hasilDiv.innerHTML = `<p class="error">Error: ${err.message}</p>`;
+  })
+  .finally(() => {
+    setTimeout(() => { sedangProses = false; }, 3000);
+  });
+}
+
+function onScanError(errorMessage) {
+  // Ini dipanggil terus-terusan saat kamera belum nemu QR, sengaja tidak ditampilkan.
+}
+
+const html5QrcodeScanner = new Html5QrcodeScanner(
+  "reader",
+  { fps: 10, qrbox: 250 },
+  false
+);
+html5QrcodeScanner.render(onScanSuccess);
+</script>
+
+</body>
+</html>

@@ -1,0 +1,1 @@
+function confirmDelete(msg='Hapus data ini?'){return confirm(msg)}

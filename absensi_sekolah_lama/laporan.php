@@ -8,7 +8,6 @@ $title   = 'Laporan Absensi';
 $tanggal = $_GET['tanggal'] ?? date('Y-m-d');
 $kelas   = $_GET['kelas'] ?? '';
 
-// Ambil data absensi berdasarkan filter
 $sql = "SELECT a.*, s.nis, s.nama, s.kelas 
         FROM absensi a 
         JOIN siswa s ON s.id = a.siswa_id 
@@ -27,29 +26,30 @@ $stmt = $pdo->prepare($sql);
 $stmt->execute($params);
 $rows = $stmt->fetchAll();
 
-// Ambil daftar kelas untuk dropdown filter
 $kelasRows = $pdo->query("SELECT DISTINCT kelas FROM siswa ORDER BY kelas")->fetchAll();
 
 include 'partials/header.php';
 ?>
 
 <style>
-    /* Kop surat & TTD disembunyikan di layar biasa, hanya muncul saat print */
-    .kop-surat {
-        display: none;
-    }
-
+   
+    .kop-surat,
+    .judul-laporan,
     .ttd-wrap {
         display: none;
     }
 
     @media print {
-        /* Sembunyikan elemen dashboard yang tidak perlu saat dicetak */
+
+        @page {
+            size: A4 portrait;
+            margin: 15mm 18mm;
+        }
+
         .sidebar, .topbar, .filters, .section-head, .btn, nav {
             display: none !important;
         }
 
-        /* Reset margin/padding container utama supaya tidak mengikuti layout sidebar */
         html, body {
             margin: 0 !important;
             padding: 0 !important;
@@ -73,57 +73,110 @@ include 'partials/header.php';
         }
 
         .kop-surat {
-            display: block;
-            text-align: center;
-            margin: 0 auto 20px auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 16px;
+            padding-bottom: 8px;
+            margin-bottom: 4px;
+            border-bottom: 3px solid #000;
         }
 
         .kop-surat img {
             display: block;
-            width: 100%;
-            max-width: 800px;
+            max-width: 480px;
+            width: 65%;
             height: auto;
             margin: 0 auto;
         }
 
-        .ttd-wrap {
-            display: flex !important;
-            justify-content: flex-end;
-            margin-top: 60px;
-            padding-right: 40px;
-            width: 100%;
+        .kop-surat + .garis-bawah-kop {
+            display: block;
+            border-bottom: 1px solid #000;
+            margin-bottom: 16px;
         }
 
-        .ttd-box {
+        .judul-laporan {
+            display: block;
             text-align: center;
-            width: 250px;
+            margin: 14px 0 18px;
         }
 
-        .ttd-space {
-            height: 80px;
+        .judul-laporan h2 {
+            margin: 0 0 4px;
+            font-size: 15px;
+            text-decoration: underline;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .judul-laporan p {
+            margin: 0;
+            font-size: 11.5px;
         }
 
         .table-wrap {
             overflow: visible !important;
             margin: 0 auto !important;
             width: 100% !important;
+            border: none !important;
+            border-radius: 0 !important;
         }
 
         table {
             width: 100% !important;
             border-collapse: collapse !important;
             margin: 0 auto !important;
+            font-size: 11px !important;
         }
 
         table th, table td {
             border: 1px solid #000 !important;
+            padding: 6px 8px !important;
+        }
+
+        table th {
+            background: #eee !important;
+            -webkit-print-color-adjust: exact;
+            print-color-adjust: exact;
+        }
+
+        .ttd-wrap {
+            display: flex !important;
+            justify-content: flex-end;
+            margin-top: 45px;
+            padding-right: 10px;
+            width: 100%;
+            font-size: 11.5px;
+        }
+
+        .ttd-box {
+            text-align: center;
+            width: 230px;
+            line-height: 1.5;
+        }
+
+        .ttd-space {
+            height: 70px;
         }
     }
 </style>
 
-<!-- KOP SURAT: hanya tampil saat cetak -->
 <div class="kop-surat">
     <img src="picture/kop.png" alt="Kop Surat SMK Taruna Bangsa">
+</div>
+<span class="garis-bawah-kop"></span>
+
+<div class="judul-laporan">
+    <h2>Laporan Absensi Siswa</h2>
+    <p>
+        Tanggal: <?= e(date('d F Y', strtotime($tanggal))) ?>
+        <?php if ($kelas !== ''): ?>
+            &nbsp;|&nbsp; Kelas: <?= e($kelas) ?>
+        <?php else: ?>
+            &nbsp;|&nbsp; Kelas: Semua Kelas
+        <?php endif; ?>
+    </p>
 </div>
 
 <div class="section-head">
@@ -192,14 +245,15 @@ include 'partials/header.php';
     </table>
 </div>
 
-<!-- TTD KEPALA SEKOLAH: hanya tampil saat cetak -->
+
 <div class="ttd-wrap">
     <div class="ttd-box">
-        <p><?= date('d F Y') ?></p>
-        <p>Mengetahui,<br>Kepala Sekolah</p>
+        <p style="margin: 0 0 2px;">Bekasi, <?= e(date('d F Y')) ?></p>
+        <p style="margin: 0 0 2px;">Mengetahui,</p>
+        <p style="margin: 0;">Kepala Sekolah</p>
         <div class="ttd-space"></div>
-        <p><strong><u>____________________</u></strong><br>
-        NIP. ..........................</p>
+        <p style="margin: 0; font-weight: 600; text-decoration: underline;">..............................</p>
+        <p style="margin: 2px 0 0;">NIP. ..........................</p>
     </div>
 </div>
 

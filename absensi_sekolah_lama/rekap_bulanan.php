@@ -14,9 +14,10 @@ $sql = "SELECT
             s.nama,
             s.kelas,
             SUM(a.status = 'Hadir') AS hadir,
-            SUM(a.status = 'Izin')  AS izin,
+            SUM(a.status = 'Terlambat') AS terlambat,
+            SUM(a.status = 'Izin') AS izin,
             SUM(a.status = 'Sakit') AS sakit,
-            SUM(a.status = 'Alpa')  AS alpa
+            SUM(a.status = 'Alpa') AS alpa
         FROM siswa s 
         LEFT JOIN absensi a 
                ON a.siswa_id = s.id 
@@ -70,6 +71,7 @@ include 'partials/header.php';
                 <th>Nama</th>
                 <th>Kelas</th>
                 <th>Hadir</th>
+                <th>Terlambat</th>
                 <th>Izin</th>
                 <th>Sakit</th>
                 <th>Alpa</th>
@@ -82,6 +84,7 @@ include 'partials/header.php';
                     <td><?= e($r['nama']) ?></td>
                     <td><?= e($r['kelas']) ?></td>
                     <td><?= e($r['hadir'] ?? 0) ?></td>
+                    <td><?= e($r['terlambat'] ?? 0) ?></td>
                     <td><?= e($r['izin'] ?? 0) ?></td>
                     <td><?= e($r['sakit'] ?? 0) ?></td>
                     <td><?= e($r['alpa'] ?? 0) ?></td>
@@ -90,7 +93,7 @@ include 'partials/header.php';
 
             <?php if (!$rows): ?>
                 <tr>
-                    <td colspan="7" style="text-align: center; color: #888;">
+                    <td colspan="8" style="text-align: center; color: #888;">
                         Tidak ada data siswa.
                     </td>
                 </tr>

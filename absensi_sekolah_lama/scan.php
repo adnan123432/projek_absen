@@ -461,7 +461,7 @@ function showNotification(jenis, title, message, jam = '') {
         </div>
     `;
 }
-
+    
 function onScanSuccess(decodedText) {
     if (busy) {
         return;
@@ -617,7 +617,6 @@ const scanner = new Html5QrcodeScanner(
             height: 450
         },
         rememberLastUsedCamera: true,
-        showTorchButtonIfSupported: true
     },
     false
 );

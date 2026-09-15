@@ -23,13 +23,13 @@ $today = date('Y-m-d');
 // =====================================================
 // ABSENSI HARI INI
 // =====================================================
-// Jumlah siswa yang hadir
-$stmt = $pdo->prepare("SELECT COUNT(*) FROM absensi WHERE tanggal = ? AND status = 'Hadir'");
+// Jumlah siswa yang hadir, termasuk terlambat
+$stmt = $pdo->prepare("SELECT COUNT(*) FROM absensi WHERE tanggal = ? AND status IN ('Hadir', 'Terlambat')");
 $stmt->execute([$today]);
 $hadir = (int) $stmt->fetchColumn();
 
-// Jumlah siswa dengan status selain Hadir
-$stmt = $pdo->prepare("SELECT COUNT(*) FROM absensi WHERE tanggal = ? AND status <> 'Hadir'");
+// Jumlah siswa dengan status selain Hadir dan Terlambat
+$stmt = $pdo->prepare("SELECT COUNT(*) FROM absensi WHERE tanggal = ? AND status NOT IN ('Hadir', 'Terlambat')");
 $stmt->execute([$today]);
 $lain = (int) $stmt->fetchColumn();
 
@@ -60,7 +60,7 @@ include 'partials/header.php';
             <small>Total Siswa</small>
             <h2><?= e($totalSiswa); ?></h2>
         </div>
-        <div class="stat-icon"></div>
+        <div class="stat-icon">👤</div>
     </div>
 
     <!-- Total Guru -->
@@ -69,7 +69,7 @@ include 'partials/header.php';
             <small>Total Guru</small>
             <h2><?= e($totalGuru); ?></h2>
         </div>
-        <div class="stat-icon"></div>
+        <div class="stat-icon">👤</div>
     </div>
 
     <!-- Hadir Hari Ini -->
@@ -78,7 +78,7 @@ include 'partials/header.php';
             <small>Hadir Hari Ini</small>
             <h2><?= e($hadir); ?></h2>
         </div>
-        <div class="stat-icon"></div>
+        <div class="stat-icon">✅</div>
     </div>
 
     <!-- Belum Hadir -->
@@ -87,7 +87,7 @@ include 'partials/header.php';
             <small>Belum Hadir</small>
             <h2><?= e($belum); ?></h2>
         </div>
-        <div class="stat-icon"></div>
+        <div class="stat-icon">❌</div>
     </div>
 </div>
 

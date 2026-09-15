@@ -17,7 +17,9 @@ require_login();
 <div class="app">
     <aside class="sidebar">
         <div class="brand">
-            <div class="brand-icon">A</div>
+            <div class="brand-icon">
+                <img src="picture/logo_tb.jpg" alt="Logo">
+            </div>
             <div>
                 <b>E-ABSENSI</b>
                 <small>SCHOOL SYSTEM</small>

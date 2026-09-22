@@ -7,17 +7,29 @@ require_login();
 $title   = 'Laporan Absensi';
 $tanggal = $_GET['tanggal'] ?? date('Y-m-d');
 $kelas   = $_GET['kelas'] ?? '';
+$status  = $_GET['status'] ?? ''; // '', 'hadir', 'terlambat', 'tidak_masuk'
 
-$sql = "SELECT a.*, s.nis, s.nama, s.kelas 
-        FROM absensi a 
-        JOIN siswa s ON s.id = a.siswa_id 
-        WHERE a.tanggal = ?";
+// LEFT JOIN dari siswa supaya siswa yang belum absen tetap muncul
+$sql = "SELECT s.nis, s.nama, s.kelas,
+               a.id AS absen_id, a.jam_masuk, a.jam_pulang, a.status, a.keterangan
+        FROM siswa s
+        LEFT JOIN absensi a ON a.siswa_id = s.id AND a.tanggal = ?
+        WHERE 1=1";
 
 $params = [$tanggal];
 
 if ($kelas !== '') {
     $sql .= " AND s.kelas = ?";
     $params[] = $kelas;
+}
+
+if ($status === 'tidak_masuk') {
+    // Belum ada record absensi sama sekali di tanggal ini
+    $sql .= " AND a.id IS NULL";
+} elseif ($status !== '') {
+    // 'hadir' atau 'terlambat' -> cocokkan ke kolom status yang tersimpan
+    $sql .= " AND a.status = ?";
+    $params[] = $status;
 }
 
 $sql .= " ORDER BY s.kelas, s.nama";
@@ -32,7 +44,72 @@ include 'partials/header.php';
 ?>
 
 <style>
-   
+    .table-wrap {
+        overflow-x: auto;
+    }
+
+    .table-wrap table {
+        width: 100%;
+        min-width: 900px;
+        border-collapse: collapse;
+    }
+
+    .table-wrap table th,
+    .table-wrap table td {
+        vertical-align: middle;
+        padding: 12px 16px;
+        text-align: left;
+    }
+
+    .table-wrap table th.col-tight,
+    .table-wrap table td.col-tight {
+        white-space: nowrap;
+        width: 1%;
+    }
+
+    .table-wrap table thead th {
+        font-size: 12.5px;
+        text-transform: uppercase;
+        letter-spacing: 0.3px;
+        color: #6b7280;
+        border-bottom: 1px solid #e5e7eb;
+        white-space: nowrap;
+    }
+
+    .table-wrap table tbody tr {
+        border-bottom: 1px solid #f1f1f4;
+    }
+
+    .table-wrap table tbody tr:hover {
+        background: #fafafa;
+    }
+
+    .badge {
+        display: inline-block;
+        white-space: nowrap;
+        padding: 4px 12px;
+        border-radius: 999px;
+        font-weight: 600;
+        font-size: 12.5px;
+        background: #f1f1f4;
+        color: #4b5563;
+    }
+
+    .badge.hadir {
+        background: #e6f6ea;
+        color: #1e8e3e;
+    }
+
+    .badge.terlambat {
+        background: #fef3e2;
+        color: #b45309;
+    }
+
+    .badge.tidak_masuk {
+        background: #fdecec;
+        color: #c0392b;
+    }
+
     .kop-surat,
     .judul-laporan,
     .ttd-wrap {
@@ -176,13 +253,16 @@ include 'partials/header.php';
         <?php else: ?>
             &nbsp;|&nbsp; Kelas: Semua Kelas
         <?php endif; ?>
+        <?php if ($status !== ''): ?>
+            &nbsp;|&nbsp; Status: <?= e(ucfirst(str_replace('_', ' ', $status))) ?>
+        <?php endif; ?>
     </p>
 </div>
 
 <div class="section-head">
     <h3>Rekap Kehadiran</h3>
     <div>
-        <a class="btn secondary" href="export_csv.php?tanggal=<?= e($tanggal) ?>&kelas=<?= urlencode($kelas) ?>">Export CSV</a>
+        <a class="btn secondary" href="export_csv.php?tanggal=<?= e($tanggal) ?>&kelas=<?= urlencode($kelas) ?>&status=<?= urlencode($status) ?>">Export CSV</a>
         <button class="btn" onclick="window.print()">Cetak</button>
     </div>
 </div>
@@ -198,6 +278,13 @@ include 'partials/header.php';
             </option>
         <?php endforeach; ?>
     </select>
+
+    <select name="status">
+        <option value="">Semua Status</option>
+        <option value="hadir" <?= ($status === 'hadir' ? 'selected' : '') ?>>Hadir</option>
+        <option value="terlambat" <?= ($status === 'terlambat' ? 'selected' : '') ?>>Terlambat</option>
+        <option value="tidak_masuk" <?= ($status === 'tidak_masuk' ? 'selected' : '') ?>>Tidak Masuk / Belum Absen</option>
+    </select>
     
     <button class="btn">Tampilkan</button>
 </form>
@@ -206,38 +293,52 @@ include 'partials/header.php';
     <table class="table">
         <thead>
             <tr>
-                <th>No</th>
-                <th>NIS</th>
+                <th class="col-tight">No</th>
+                <th class="col-tight">NIS</th>
                 <th>Nama</th>
-                <th>Kelas</th>
-                <th>Jam Masuk</th>
-                <th>Jam Pulang</th>
-                <th>Status</th>
+                <th class="col-tight">Kelas</th>
+                <th class="col-tight">Jam Masuk</th>
+                <th class="col-tight">Jam Pulang</th>
+                <th class="col-tight">Status</th>
                 <th>Keterangan</th>
             </tr>
         </thead>
         <tbody>
             <?php foreach ($rows as $i => $r): ?>
+                <?php
+                    $belumAbsen  = ($r['absen_id'] === null);
+                    $statusLower = $belumAbsen ? 'tidak_masuk' : strtolower($r['status']);
+                    $statusLabel = $belumAbsen ? 'Tidak Masuk' : $r['status'];
+                    $badgeClass  = $statusLower;
+
+                    if ($belumAbsen) {
+                        $ket = 'Belum melakukan absensi.';
+                    } elseif ($statusLower === 'hadir') {
+                        $ket = $r['keterangan'] ?: 'Hadir tepat waktu.';
+                    } else {
+                        $ket = $r['keterangan'] ?: '-';
+                    }
+                ?>
                 <tr>
-                    <td><?= $i + 1 ?></td>
-                    <td><?= e($r['nis']) ?></td>
+                    <td class="col-tight"><?= $i + 1 ?></td>
+                    <td class="col-tight"><?= e($r['nis']) ?></td>
                     <td><?= e($r['nama']) ?></td>
-                    <td><?= e($r['kelas']) ?></td>
-                    <td><?= e($r['jam_masuk'] ?: '-') ?></td>
-                    <td><?= e($r['jam_pulang'] ?: '-') ?></td>
-                    <td>
-                        <span class="badge <?= strtolower(e($r['status'])) ?>">
-                            <?= e($r['status']) ?>
+                    <td class="col-tight"><?= e($r['kelas']) ?></td>
+                    <td class="col-tight"><?= e($r['jam_masuk'] ?: '-') ?></td>
+                    <td class="col-tight"><?= e($r['jam_pulang'] ?: '-') ?></td>
+                    <td class="col-tight">
+                        <span class="badge <?= e($badgeClass) ?>">
+                            <?= e($statusLabel) ?>
                         </span>
                     </td>
-                    <td><?= e($r['keterangan']) ?></td>
+                    <td><?= e($ket) ?></td>
                 </tr>
             <?php endforeach; ?>
 
             <?php if (!$rows): ?>
                 <tr>
                     <td colspan="8" style="text-align: center; color: #888;">
-                        Belum ada absensi pada tanggal ini.
+                        Belum ada data siswa untuk ditampilkan.
                     </td>
                 </tr>
             <?php endif; ?>

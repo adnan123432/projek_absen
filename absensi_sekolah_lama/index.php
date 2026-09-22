@@ -52,6 +52,45 @@ $recent = $stmt->fetchAll();
 include 'partials/header.php';
 ?>
 
+<!-- KARTU STATISTIK -->
+<div class="cards">
+    <!-- Total Siswa -->
+    <div class="card stat">
+        <div>
+            <small>Total Siswa</small>
+            <h2><?= e($totalSiswa); ?></h2>
+        </div>
+        <div class="stat-icon icon-blue">👤</div>
+    </div>
+
+    <!-- Total Guru -->
+    <div class="card stat">
+        <div>
+            <small>Total Guru</small>
+            <h2><?= e($totalGuru); ?></h2>
+        </div>
+        <div class="stat-icon icon-purple">👤</div>
+    </div>
+
+    <!-- Hadir Hari Ini -->
+    <div class="card stat">
+        <div>
+            <small>Hadir Hari Ini</small>
+            <h2><?= e($hadir); ?></h2>
+        </div>
+        <div class="stat-icon icon-green">✅</div>
+    </div>
+
+    <!-- Belum Hadir -->
+    <div class="card stat">
+        <div>
+            <small>Belum Hadir</small>
+            <h2><?= e($belum); ?></h2>
+        </div>
+        <div class="stat-icon icon-red">❌</div>
+    </div>
+</div>
+
 <!-- GALERI PROGRAM KEAHLIAN -->
 <div class="section jurusan-section">
     <div class="section-head">
@@ -98,45 +137,6 @@ include 'partials/header.php';
                 <span>Teknik Instalasi Tenaga Listrik</span>
             </div>
         </div>
-    </div>
-</div>
-
-<!-- KARTU STATISTIK -->
-<div class="cards">
-    <!-- Total Siswa -->
-    <div class="card stat">
-        <div>
-            <small>Total Siswa</small>
-            <h2><?= e($totalSiswa); ?></h2>
-        </div>
-        <div class="stat-icon icon-blue">👤</div>
-    </div>
-
-    <!-- Total Guru -->
-    <div class="card stat">
-        <div>
-            <small>Total Guru</small>
-            <h2><?= e($totalGuru); ?></h2>
-        </div>
-        <div class="stat-icon icon-purple">👤</div>
-    </div>
-
-    <!-- Hadir Hari Ini -->
-    <div class="card stat">
-        <div>
-            <small>Hadir Hari Ini</small>
-            <h2><?= e($hadir); ?></h2>
-        </div>
-        <div class="stat-icon icon-green">✅</div>
-    </div>
-
-    <!-- Belum Hadir -->
-    <div class="card stat">
-        <div>
-            <small>Belum Hadir</small>
-            <h2><?= e($belum); ?></h2>
-        </div>
-        <div class="stat-icon icon-red">❌</div>
     </div>
 </div>
 

@@ -658,7 +658,7 @@ body {
 
 .jurusan-photo {
     width: 100%;
-    aspect-ratio: 700 / 320;
+    height: 300px;
     overflow: hidden;
 }
 
@@ -667,7 +667,7 @@ body {
     width: 100%;
     height: 100%;
     object-fit: cover;
-    object-position: center 75%;
+    object-position: center 82%;
 }
 
 .jurusan-caption {

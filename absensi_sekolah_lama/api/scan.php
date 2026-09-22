@@ -84,10 +84,10 @@ try {
     // =====================================================
 
     $stmt = $pdo->prepare("
-        SELECT id, nis, nama, kelas, no_wa_ortu
-        FROM siswa
-        WHERE nis = ?
-        LIMIT 1
+    SELECT id, nis, nama, kelas, no_wa_ortu
+    FROM siswa
+    WHERE nis = ?
+    LIMIT 1
     ");
 
     $stmt->execute([$nis]);

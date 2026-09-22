@@ -6,7 +6,7 @@
 $host = "localhost";
 $user = "root";
 $pass = "";
-$dbname = "absensi_qr";
+$dbname = "absensi_sekolah";
 
 $koneksi = new mysqli($host, $user, $pass, $dbname);
 

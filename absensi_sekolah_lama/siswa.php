@@ -21,15 +21,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $nama  = trim($_POST['nama']);
     $kelas = trim($_POST['kelas']);
     $jk    = $_POST['jk'];
+    $email = trim($_POST['email'] ?? '');
     $id    = (int) ($_POST['id'] ?? 0);
 
+    // Kosongkan jadi NULL kalau memang tidak diisi, bukan string kosong
+    $email = ($email === '') ? null : $email;
+
     if ($id) {
-        $st = $pdo->prepare("UPDATE siswa SET nis = ?, nama = ?, kelas = ?, jenis_kelamin = ? WHERE id = ?");
-        $st->execute([$nis, $nama, $kelas, $jk, $id]);
+        $st = $pdo->prepare("UPDATE siswa SET nis = ?, nama = ?, kelas = ?, jenis_kelamin = ?, email = ? WHERE id = ?");
+        $st->execute([$nis, $nama, $kelas, $jk, $email, $id]);
         flash('success', 'Data siswa diperbarui.');
     } else {
-        $st = $pdo->prepare("INSERT INTO siswa (nis, nama, kelas, jenis_kelamin) VALUES (?, ?, ?, ?)");
-        $st->execute([$nis, $nama, $kelas, $jk]);
+        $st = $pdo->prepare("INSERT INTO siswa (nis, nama, kelas, jenis_kelamin, email) VALUES (?, ?, ?, ?, ?)");
+        $st->execute([$nis, $nama, $kelas, $jk, $email]);
         flash('success', 'Siswa berhasil ditambahkan.');
     }
 
@@ -57,7 +61,10 @@ include 'partials/header.php';
 
 <div class="section-head">
     <h3><?= $edit ? 'Edit Siswa' : 'Daftar Siswa' ?></h3>
-    <a class="btn" href="siswa.php?tambah=1">+ Tambah Siswa</a>
+    <div>
+        <a class="btn secondary" href="kirim_qr_email.php">Kirim Semua QR ke Email</a>
+        <a class="btn" href="siswa.php?tambah=1">+ Tambah Siswa</a>
+    </div>
 </div>
 
 <!-- FORM TAMBAH / EDIT -->
@@ -89,6 +96,11 @@ include 'partials/header.php';
                         <option value="P" <?= ($edit['jenis_kelamin'] ?? '') === 'P' ? 'selected' : '' ?>>Perempuan</option>
                     </select>
                 </div>
+
+                <div class="field">
+                    <label>Email Siswa</label>
+                    <input type="email" name="email" placeholder="siswa@email.com" value="<?= e($edit['email'] ?? '') ?>">
+                </div>
             </div>
 
             <div class="actions">
@@ -116,6 +128,7 @@ include 'partials/header.php';
                 <th>Nama</th>
                 <th>Kelas</th>
                 <th>JK</th>
+                <th>Email</th>
                 <th>QR</th>
                 <th>Aksi</th>
             </tr>
@@ -128,6 +141,13 @@ include 'partials/header.php';
                     <td><?= e($r['kelas']) ?></td>
                     <td><?= e($r['jenis_kelamin']) ?></td>
                     <td>
+                        <?php if (!empty($r['email'])): ?>
+                            <?= e($r['email']) ?>
+                        <?php else: ?>
+                            <span style="color:#aaa;">- belum diisi -</span>
+                        <?php endif; ?>
+                    </td>
+                    <td>
                         <a class="btn secondary" href="kartu_qr.php?id=<?= $r['id'] ?>">Lihat QR</a>
                     </td>
                     <td>
@@ -139,7 +159,7 @@ include 'partials/header.php';
 
             <?php if (!$rows): ?>
                 <tr>
-                    <td colspan="6" style="text-align: center; color: #888;">
+                    <td colspan="7" style="text-align: center; color: #888;">
                         Data siswa tidak ditemukan.
                     </td>
                 </tr>

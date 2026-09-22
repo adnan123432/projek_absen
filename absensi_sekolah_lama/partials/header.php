@@ -1,6 +1,11 @@
 <?php 
 require_once __DIR__ . '/../config/auth.php'; 
 require_login(); 
+
+$current = basename($_SERVER['PHP_SELF']);
+function nav_active($file, $current) {
+    return $file === $current ? 'active' : '';
+}
 ?>
 <!doctype html>
 <html lang="id">
@@ -35,18 +40,63 @@ require_login();
         </div>
 
         <nav>
-            <a href="index.php" class="<?= basename($_SERVER['PHP_SELF']) === 'index.php' ? 'active' : '' ?>"> <span>Dashboard</span></a>
-            <a href="siswa.php" class="<?= basename($_SERVER['PHP_SELF']) === 'siswa.php' ? 'active' : '' ?>"> <span>Data Siswa</span></a>
-            <a href="guru.php" class="<?= basename($_SERVER['PHP_SELF']) === 'guru.php' ? 'active' : '' ?>"> <span>Data Guru</span></a>
-            <a href="laporan.php" class="<?= basename($_SERVER['PHP_SELF']) === 'laporan.php' ? 'active' : '' ?>"> <span>Laporan</span></a>
-            <a href="absensi.php" class="<?= basename($_SERVER['PHP_SELF']) === 'absensi.php' ? 'active' : '' ?>"> <span>Kelola Absen</span></a>
-            <a href="jadwal.php" class="<?= basename($_SERVER['PHP_SELF']) === 'jadwal.php' ? 'active' : '' ?>"> <span>Jadwal</span></a>
-            <a href="rekap_bulanan.php" class="<?= basename($_SERVER['PHP_SELF']) === 'rekap_bulanan.php' ? 'active' : '' ?>"> <span>Rekap Bulanan</span></a>
-            <a href="pengaturan.php" class="<?= basename($_SERVER['PHP_SELF']) === 'pengaturan.php' ? 'active' : '' ?>"> <span>Pengaturan</span></a>
-            <a href="scan.php" class="<?= basename($_SERVER['PHP_SELF']) === 'scan.php' ? 'active' : '' ?>"> <span>Scan Absensi</span></a>
+            <div class="nav-group">
+                <p class="nav-group-title">Utama</p>
+                <a href="index.php" class="<?= nav_active('index.php', $current) ?>">
+                    <span class="nav-icon">🏠</span>
+                    <span>Dashboard</span>
+                </a>
+                <a href="scan.php" class="<?= nav_active('scan.php', $current) ?>">
+                    <span class="nav-icon">📷</span>
+                    <span>Scan Absensi</span>
+                </a>
+            </div>
+
+            <div class="nav-group">
+                <p class="nav-group-title">Data Master</p>
+                <a href="siswa.php" class="<?= nav_active('siswa.php', $current) ?>">
+                    <span class="nav-icon">🎓</span>
+                    <span>Data Siswa</span>
+                </a>
+                <a href="guru.php" class="<?= nav_active('guru.php', $current) ?>">
+                    <span class="nav-icon">🧑‍🏫</span>
+                    <span>Data Guru</span>
+                </a>
+            </div>
+
+            <div class="nav-group">
+                <p class="nav-group-title">Absensi &amp; Laporan</p>
+                <a href="absensi.php" class="<?= nav_active('absensi.php', $current) ?>">
+                    <span class="nav-icon">🗂️</span>
+                    <span>Kelola Absen</span>
+                </a>
+                <a href="jadwal.php" class="<?= nav_active('jadwal.php', $current) ?>">
+                    <span class="nav-icon">📅</span>
+                    <span>Jadwal</span>
+                </a>
+                <a href="rekap_bulanan.php" class="<?= nav_active('rekap_bulanan.php', $current) ?>">
+                    <span class="nav-icon">📊</span>
+                    <span>Rekap Bulanan</span>
+                </a>
+                <a href="laporan.php" class="<?= nav_active('laporan.php', $current) ?>">
+                    <span class="nav-icon">📄</span>
+                    <span>Laporan</span>
+                </a>
+            </div>
+
+            <div class="nav-group">
+                <p class="nav-group-title">Sistem</p>
+                <a href="pengaturan.php" class="<?= nav_active('pengaturan.php', $current) ?>">
+                    <span class="nav-icon">⚙️</span>
+                    <span>Pengaturan</span>
+                </a>
+            </div>
         </nav>
 
-        <a class="logout" href="logout.php">↪ Keluar Aplikasi</a>
+        <a class="logout" href="logout.php">
+            <span class="nav-icon">↪</span>
+            <span>Keluar Aplikasi</span>
+        </a>
     </aside>
 
     <main class="main">

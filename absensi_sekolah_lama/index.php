@@ -52,6 +52,55 @@ $recent = $stmt->fetchAll();
 include 'partials/header.php';
 ?>
 
+<!-- GALERI PROGRAM KEAHLIAN -->
+<div class="section jurusan-section">
+    <div class="section-head">
+        <h3>Program Keahlian</h3>
+    </div>
+
+    <div class="jurusan-gallery">
+        <div class="jurusan-card jurusan-rpl">
+            <div class="jurusan-photo">
+                <img src="picture/rpl.jpeg" alt="Rekayasa Perangkat Lunak">
+            </div>
+            <div class="jurusan-caption">
+                <span class="jurusan-dot"></span>
+                <span>Rekayasa Perangkat Lunak</span>
+            </div>
+        </div>
+
+        <div class="jurusan-card jurusan-tkr">
+            <div class="jurusan-photo">
+                <img src="picture/tkr.jpeg" alt="Teknik Kendaraan Ringan">
+            </div>
+            <div class="jurusan-caption">
+                <span class="jurusan-dot"></span>
+                <span>Teknik Kendaraan Ringan</span>
+            </div>
+        </div>
+
+        <div class="jurusan-card jurusan-tav">
+            <div class="jurusan-photo">
+                <img src="picture/tav.jpeg" alt="Teknik Audio Video">
+            </div>
+            <div class="jurusan-caption">
+                <span class="jurusan-dot"></span>
+                <span>Teknik Audio Video</span>
+            </div>
+        </div>
+
+        <div class="jurusan-card jurusan-titl">
+            <div class="jurusan-photo">
+                <img src="picture/titl.jpeg" alt="Teknik Instalasi Tenaga Listrik">
+            </div>
+            <div class="jurusan-caption">
+                <span class="jurusan-dot"></span>
+                <span>Teknik Instalasi Tenaga Listrik</span>
+            </div>
+        </div>
+    </div>
+</div>
+
 <!-- KARTU STATISTIK -->
 <div class="cards">
     <!-- Total Siswa -->
@@ -60,7 +109,7 @@ include 'partials/header.php';
             <small>Total Siswa</small>
             <h2><?= e($totalSiswa); ?></h2>
         </div>
-        <div class="stat-icon">👤</div>
+        <div class="stat-icon icon-blue">👤</div>
     </div>
 
     <!-- Total Guru -->
@@ -69,7 +118,7 @@ include 'partials/header.php';
             <small>Total Guru</small>
             <h2><?= e($totalGuru); ?></h2>
         </div>
-        <div class="stat-icon">👤</div>
+        <div class="stat-icon icon-purple">👤</div>
     </div>
 
     <!-- Hadir Hari Ini -->
@@ -78,7 +127,7 @@ include 'partials/header.php';
             <small>Hadir Hari Ini</small>
             <h2><?= e($hadir); ?></h2>
         </div>
-        <div class="stat-icon">✅</div>
+        <div class="stat-icon icon-green">✅</div>
     </div>
 
     <!-- Belum Hadir -->
@@ -87,7 +136,7 @@ include 'partials/header.php';
             <small>Belum Hadir</small>
             <h2><?= e($belum); ?></h2>
         </div>
-        <div class="stat-icon">❌</div>
+        <div class="stat-icon icon-red">❌</div>
     </div>
 </div>
 

@@ -37,23 +37,29 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 </head>
 <body class="login-page">
     <div class="login-box">
-        <!-- SEKSI INFORMASI SISI KIRI -->
+        <!-- SEKSI IDENTITAS SEKOLAH SISI KIRI -->
         <section class="login-info">
-            <div class="brand">
-                <div class="brand-icon">A</div>
-                <div>
-                    <b>E-ABSENSI</b>
-                    <small>SCHOOL SYSTEM</small>
-                </div>
+            <div class="school-logo-wrap">
+                <img src="picture/logo_tb.jpg" alt="Logo SMK Taruna Bangsa" class="school-logo">
             </div>
-            <h1>Sistem Absensi Digital</h1>
-            <p>Kelola data siswa, guru, absensi harian, laporan dan scan QR Code dalam satu dashboard sekolah.</p>
+
+            <h1 class="school-name">SMK TARUNA BANGSA</h1>
+            <p class="school-city">BEKASI</p>
+
+            <div class="school-divider"></div>
+
+            <p class="school-tagline">Disiplin&nbsp;&bull;&nbsp;Berakhlak Mulia&nbsp;&bull;&nbsp;Terampil</p>
+
+            <p class="school-desc">
+                Sistem Informasi Absensi Digital untuk mengelola data siswa, guru,
+                kehadiran harian, laporan, dan pemindaian QR Code dalam satu platform terpadu.
+            </p>
         </section>
 
         <!-- SEKSI FORM LOGIN SISI KANAN -->
         <section class="login-form">
             <h2>Selamat Datang Kembali</h2>
-            <p>Masuk untuk mengelola sistem absensi sekolah.</p>
+            <p>Silakan masuk untuk mengelola sistem absensi sekolah.</p>
 
             <?php if ($error): ?>
                 <div class="alert error"><?= e($error); ?></div>
@@ -62,7 +68,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <form method="post">
                 <div class="field">
                     <label>Username</label>
-                    <input name="username" required>
+                    <input name="username" required autofocus>
                 </div>
 
                 <div class="field">
@@ -73,7 +79,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <button type="submit" class="btn" style="width: 100%;">Masuk ke Dashboard</button>
             </form>
 
-           
+            <p class="login-footnote">&copy; <?= date('Y') ?> SMK Taruna Bangsa Bekasi &mdash; Seluruh hak dilindungi.</p>
         </section>
     </div>
 </body>
